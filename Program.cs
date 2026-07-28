@@ -6,7 +6,6 @@ using System.ClientModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Windows.Forms;
 
 string apiKey = "sk-c7366fcac5aa4023827e049e7a714705";
 AIAgent agent = new OpenAIClient(
