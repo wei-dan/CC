@@ -11,7 +11,8 @@ using System.Windows.Forms;
 
 public static class ScreenCapture
 {
-    public static void Capture(string filePath)
+    [Description("Captures the current screen and saves it as a PNG file at the specified path.")]
+    public static string Capture(string filePath)
     {
         var virtualScreen = SystemInformation.VirtualScreen;
         using var bitmap = new Bitmap(virtualScreen.Width, virtualScreen.Height, PixelFormat.Format32bppArgb);
@@ -19,6 +20,7 @@ public static class ScreenCapture
         graphics.CopyFromScreen(virtualScreen.Left, virtualScreen.Top, 0, 0, virtualScreen.Size,
             CopyPixelOperation.SourceCopy);
         bitmap.Save(filePath, ImageFormat.Png);
+        return $"Screenshot saved to {filePath}";
     }
 }
 
@@ -32,7 +34,8 @@ AIAgent agent = new OpenAIClient(
     )
     .GetChatClient("qwen3.7-plus") //("deepseek-v4-pro")
     .AsAIAgent(tools: [
-        AIFunctionFactory.Create(AnalyzePicture)
+        AIFunctionFactory.Create(AnalyzePicture),
+        AIFunctionFactory.Create(ScreenCapture.Capture)
         ]);
 AgentSession session = await agent.CreateSessionAsync();
 
