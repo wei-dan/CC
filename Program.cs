@@ -21,7 +21,8 @@ AIAgent agent = new OpenAIClient(
     .GetChatClient("qwen3.7-plus") //("deepseek-v4-pro")
     .AsAIAgent(tools: [
         AIFunctionFactory.Create(AnalyzePicture),
-        AIFunctionFactory.Create(Capture)
+        AIFunctionFactory.Create(Capture),
+        AIFunctionFactory.Create(MoveMouse)
         ]);
 AgentSession session = await agent.CreateSessionAsync();
 
@@ -107,4 +108,11 @@ static string Capture(string fileName)
 
     // 返回保存后的完整路径
     return $"full path {absolutePath}";
+}
+
+[Description("移动鼠标到屏幕上的指定坐标 (x, y)。")]
+static string MoveMouse([Description("目标X像素坐标")]int x, [Description("目标Y像素坐标")]int y)
+{
+    Cursor.Position = new Point(x, y);
+    return $"Mouse moved to ({x},{y})";
 }
