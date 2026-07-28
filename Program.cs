@@ -72,8 +72,8 @@ static string AnalyzePicture([Description("提供描述")]string description, [D
 [Description("Captures the current screen and saves it as a PNG file at the specified filename.")]
 static string Capture(string fileName)
 {
-    // 使用桌面目录保存文件，保证路径可靠
-    string folder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+    // 保存到当前程序运行的目录
+    string folder = AppDomain.CurrentDomain.BaseDirectory;
     if (!Directory.Exists(folder))
         Directory.CreateDirectory(folder);
 
