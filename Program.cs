@@ -17,7 +17,7 @@ AIAgent agent = new OpenAIClient(
         new ApiKeyCredential(apiKey),
         new OpenAIClientOptions
         {
-            Endpoint = new Uri("")
+            Endpoint = new Uri("https://dashscope.aliyuncs.com/compatible-mode/v1")
         }
     )
     .GetChatClient("qwen3.7-plus") //("deepseek-v4-pro")
