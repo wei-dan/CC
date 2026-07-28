@@ -73,7 +73,7 @@ static string AnalyzePicture([Description("提供描述")]string description, [D
 static string Capture(string fileName)
 {
     // 将相对路径转为绝对完整路径
-    string absolutePath = "";
+    string absolutePath = Path.GetFullPath(fileName);
 
     // 获取主屏幕尺寸
     var bounds = Screen.PrimaryScreen.Bounds;
