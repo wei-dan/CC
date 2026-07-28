@@ -3,7 +3,10 @@ using OpenAI;
 using OpenAI.Chat;
 using System;
 using System.ClientModel;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Windows.Forms;
 
 string apiKey = "sk-c7366fcac5aa4023827e049e7a714705";
 AIAgent agent = new OpenAIClient(
@@ -28,19 +31,20 @@ while (true)
     {
         break;
     }
+
+    if (input == "/screenshot")
+    {
+        var imageBytes = CaptureScreen();
+        File.WriteAllBytes("screenshot.png", imageBytes);
+        Console.WriteLine("Bot: 截图已保存为 screenshot.png");
+        continue;
+    }
+
     var response = await agent.RunAsync(input, session);
     Console.WriteLine($"Bot: { response.Text }");
 }
 
-// 如果需要启用 CaptureScreen 截图功能，请在 .csproj 中做如下设置：
-//   <UseWindowsForms>true</UseWindowsForms>
-//   并通过 NuGet 安装 System.Drawing.Common 包。
-// 然后取消以下代码区域的注释，并添加相应的 using 指令。
-/*
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Windows.Forms;
-
+// 请确保在 .csproj 中引用 System.Drawing.Common 包并设置 <UseWindowsForms>true</UseWindowsForms>
 static byte[] CaptureScreen()
 {
     var bounds = Screen.PrimaryScreen.Bounds;
@@ -51,4 +55,3 @@ static byte[] CaptureScreen()
     bitmap.Save(ms, ImageFormat.Png);
     return ms.ToArray();
 }
-*/
