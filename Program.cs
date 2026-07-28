@@ -7,6 +7,7 @@ using System.ClientModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Windows.Forms;
 
 const string apiKey = "sk-ws-H.EIIMERL.YOZt.MEUCIEnJYx_DqGa8aGadlD1AzkUXKik4SYqkIaYjstnlNHpcAiEA40Q3ru1LsKM_OQ_HO32SbYCnl-M7lWgJhTWkIk3K5l0"; //"sk-c7366fcac5aa4023827e049e7a714705";
@@ -71,6 +72,9 @@ static string AnalyzePicture([Description("提供描述")]string description, [D
 [Description("Captures the current screen and saves it as a PNG file at the specified path.")]
 static string Capture(string filePath)
 {
+    // 将相对路径转为绝对完整路径
+    string absolutePath = Path.GetFullPath(filePath);
+
     // 获取主屏幕尺寸
     var bounds = Screen.PrimaryScreen.Bounds;
 
@@ -89,8 +93,9 @@ static string Capture(string filePath)
         0,
         bounds.Size);
 
-    // 保存
-    bitmap.Save(filePath, ImageFormat.Png);
+    // 使用绝对路径保存
+    bitmap.Save(absolutePath, ImageFormat.Png);
 
-    return $"Screenshot saved to {filePath}";
+    // 返回电脑上的完整路径
+    return absolutePath;
 }
