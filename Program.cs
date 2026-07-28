@@ -3,8 +3,6 @@ using OpenAI;
 using OpenAI.Chat;
 using System;
 using System.ClientModel;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 
 string apiKey = "sk-c7366fcac5aa4023827e049e7a714705";
@@ -34,13 +32,17 @@ while (true)
     Console.WriteLine($"Bot: { response.Text }");
 }
 
-/// <summary>
-/// 对当前电脑主屏幕进行截图，并将图像数据保存为 PNG 格式的字节数组。
-/// </summary>
-/// <returns>PNG 图像的字节数组</returns>
+// 如果需要启用 CaptureScreen 截图功能，请在 .csproj 中做如下设置：
+//   <UseWindowsForms>true</UseWindowsForms>
+//   并通过 NuGet 安装 System.Drawing.Common 包。
+// 然后取消以下代码区域的注释，并添加相应的 using 指令。
+/*
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Windows.Forms;
+
 static byte[] CaptureScreen()
 {
-    // 获取主屏幕的边界
     var bounds = Screen.PrimaryScreen.Bounds;
     using var bitmap = new Bitmap(bounds.Width, bounds.Height);
     using var graphics = Graphics.FromImage(bitmap);
@@ -49,3 +51,4 @@ static byte[] CaptureScreen()
     bitmap.Save(ms, ImageFormat.Png);
     return ms.ToArray();
 }
+*/
