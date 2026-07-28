@@ -69,11 +69,11 @@ static string AnalyzePicture([Description("提供描述")]string description, [D
     return response.Text;
 }
 
-[Description("Captures the current screen and saves it as a PNG file at the specified path.")]
-static string Capture(string filePath)
+[Description("Captures the current screen and saves it as a PNG file at it's absolute path.")]
+static string Capture(string fileName)
 {
     // 将相对路径转为绝对完整路径
-    string absolutePath = Path.GetFullPath(filePath);
+    string absolutePath = "";
 
     // 获取主屏幕尺寸
     var bounds = Screen.PrimaryScreen.Bounds;
@@ -97,5 +97,5 @@ static string Capture(string filePath)
     bitmap.Save(absolutePath, ImageFormat.Png);
 
     // 返回电脑上的完整路径
-    return absolutePath;
+    return $"full path {absolutePath}";
 }
