@@ -54,6 +54,7 @@ static string AnalyzePicture([Description("提供描述")]string description, [D
     .GetChatClient("qwen3.7-plus") //("deepseek-v4-pro")
     .AsAIAgent();
 
+    var bytes = File.ReadAllBytes(path);
     var mes = new Microsoft.Extensions.AI.ChatMessage(
         ChatRole.User,
         new AIContent[]
@@ -61,8 +62,8 @@ static string AnalyzePicture([Description("提供描述")]string description, [D
             new TextContent(
                 description
             ),
-            new UriContent(
-                new Uri(path),
+            new DataContent(
+               bytes,
                 "image/jpeg")
         });
     var response = agent1.RunAsync(mes).GetAwaiter().GetResult();
