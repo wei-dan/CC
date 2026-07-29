@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -34,7 +35,8 @@ AIAgent agent = new OpenAIClient(
         AIFunctionFactory.Create(MoveMouse),
         AIFunctionFactory.Create(Click),
         AIFunctionFactory.Create(DoubleClick),
-        AIFunctionFactory.Create(CaptureRegion)
+        AIFunctionFactory.Create(CaptureRegion),
+        AIFunctionFactory.Create(FindIconPosition)
         ]);
 AgentSession session = await agent.CreateSessionAsync();
 
@@ -226,6 +228,62 @@ static string CaptureRegion(
     bitmap.Save(absolutePath, ImageFormat.Png);
 
     return $"区域截图已保存：{absolutePath}";
+}
+
+[Description("根据图标描述找到图标在屏幕上的像素坐标。返回格式 x,y")]
+static string FindIconPosition([Description("图标描述")] string iconDescription)
+{
+    // 截取全屏（不添加网格），临时文件
+    string tempFileName = "find_icon_" + Guid.NewGuid() + ".png";
+    string folder = AppDomain.CurrentDomain.BaseDirectory;
+    if (!Directory.Exists(folder))
+        Directory.CreateDirectory(folder);
+    string screenshotPath = Path.Combine(folder, tempFileName);
+
+    var bounds = Screen.PrimaryScreen.Bounds;
+    using (var bmp = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format32bppArgb))
+    using (var g = Graphics.FromImage(bmp))
+    {
+        g.CopyFromScreen(bounds.X, bounds.Y, 0, 0, bounds.Size);
+        bmp.Save(screenshotPath, ImageFormat.Png);
+    }
+
+    // 请求模型分析图片并返回坐标
+    string prompt = $"图中有一个图标，描述如下：{iconDescription}。请指出该图标中心点的屏幕像素坐标。只回复两个数字，格式：x,y（例如200,300）。如果没找到，回复 -1,-1。";
+
+    try
+    {
+        string modelResponse = AnalyzePicture(prompt, screenshotPath);
+        modelResponse = modelResponse.Trim();
+
+        // 尝试解析形如“123,456”的坐标
+        var match = Regex.Match(modelResponse, @"(-?\d+)\s*,\s*(-?\d+)");
+        if (match.Success)
+        {
+            int x = int.Parse(match.Groups[1].Value);
+            int y = int.Parse(match.Groups[2].Value);
+            return $"{x},{y}";
+        }
+
+        return $"无法从回复中解析坐标，模型返回：{modelResponse}";
+    }
+    catch (Exception ex)
+    {
+        return $"查找图标时出错：{ex.Message}";
+    }
+    finally
+    {
+        // 删除临时文件
+        try
+        {
+            if (File.Exists(screenshotPath))
+                File.Delete(screenshotPath);
+        }
+        catch
+        {
+            // 忽略删除错误
+        }
+    }
 }
 
 [Description("Get current mouse cursor position")]
