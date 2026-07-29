@@ -227,3 +227,11 @@ static string CaptureRegion(
 
     return $"区域截图已保存：{absolutePath}";
 }
+
+[Description("Get current mouse cursor position")]
+static string GetMousePosition()
+{
+    var pos = Cursor.Position;
+
+    return $"Current mouse position: ({pos.X},{pos.Y})";
+}
