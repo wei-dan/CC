@@ -37,7 +37,8 @@ AIAgent agent = new OpenAIClient(
         AIFunctionFactory.Create(DoubleClick),
         //AIFunctionFactory.Create(CaptureRegion),
         AIFunctionFactory.Create(FindIconPosition),
-        AIFunctionFactory.Create(GetMousePosition)
+        AIFunctionFactory.Create(GetMousePosition),
+        AIFunctionFactory.Create(GetScreenResolution)
         ]);
 AgentSession session = await agent.CreateSessionAsync();
 
@@ -293,4 +294,11 @@ static string GetMousePosition()
     var pos = Cursor.Position;
 
     return $"Current mouse position: ({pos.X},{pos.Y})";
+}
+
+[Description("返回电脑主显示器的分辨率，格式为“width x height”。")]
+static string GetScreenResolution()
+{
+    var bounds = Screen.PrimaryScreen.Bounds;
+    return $"Screen resolution: {bounds.Width} x {bounds.Height}";
 }
