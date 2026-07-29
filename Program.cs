@@ -101,23 +101,37 @@ static string Capture(string fileName)
 
     string absolutePath = Path.Combine(folder, fileName);
 
-    // 获取主屏幕尺寸
+    // 获取主屏幕逻辑尺寸
     var bounds = Screen.PrimaryScreen.Bounds;
 
+    // 考虑 DPI 缩放，确保截图覆盖完整的物理像素
+    float scaleX = 1f;
+    float scaleY = 1f;
+    using (var devGraphics = Graphics.FromHwnd(IntPtr.Zero))
+    {
+        scaleX = devGraphics.DpiX / 96f;
+        scaleY = devGraphics.DpiY / 96f;
+    }
+
+    int width = (int)Math.Round(bounds.Width * scaleX);
+    int height = (int)Math.Round(bounds.Height * scaleY);
+    int srcX = (int)Math.Round(bounds.X * scaleX);
+    int srcY = (int)Math.Round(bounds.Y * scaleY);
+
     using var bitmap = new Bitmap(
-        bounds.Width,
-        bounds.Height,
+        width,
+        height,
         PixelFormat.Format32bppArgb);
 
     using var graphics = Graphics.FromImage(bitmap);
 
-    // 从屏幕复制像素
+    // 从屏幕复制物理像素
     graphics.CopyFromScreen(
-        bounds.X,
-        bounds.Y,
+        srcX,
+        srcY,
         0,
         0,
-        bounds.Size);
+        new Size(width, height));
 
     // === 绘制像素网格和坐标 ===
     int gridStep = 100; // 网格间隔（像素）
@@ -126,9 +140,6 @@ static string Capture(string fileName)
     using var coordFont = new Font("Consolas", 8, FontStyle.Regular);
     using var coordBrush = new SolidBrush(Color.FromArgb(180, 255, 255, 255)); // 半透明白色
     using var backgroundBrush = new SolidBrush(Color.FromArgb(120, 60, 60, 60)); // 半透明深灰背景
-
-    int width = bitmap.Width;
-    int height = bitmap.Height;
 
     // 绘制水平线和左侧 Y 坐标
     for (int y = 0; y < height; y += gridStep)
