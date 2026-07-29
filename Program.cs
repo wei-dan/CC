@@ -103,6 +103,41 @@ static string Capture(string fileName)
         0,
         bounds.Size);
 
+    // === 绘制像素网格和坐标 ===
+    int gridStep = 100; // 网格间隔（像素）
+
+    using var gridPen = new Pen(Color.FromArgb(100, 255, 255, 0), 1); // 半透明黄色
+    using var coordFont = new Font("Consolas", 8, FontStyle.Regular);
+    using var coordBrush = new SolidBrush(Color.FromArgb(180, 255, 255, 255)); // 半透明白色
+    using var backgroundBrush = new SolidBrush(Color.FromArgb(120, 60, 60, 60)); // 半透明深灰背景
+
+    int width = bitmap.Width;
+    int height = bitmap.Height;
+
+    // 绘制水平线和左侧 Y 坐标
+    for (int y = 0; y < height; y += gridStep)
+    {
+        graphics.DrawLine(gridPen, 0, y, width, y);
+
+        string yLabel = y.ToString();
+        SizeF labelSize = graphics.MeasureString(yLabel, coordFont);
+        RectangleF bgRect = new RectangleF(2, y - labelSize.Height / 2, labelSize.Width + 4, labelSize.Height + 2);
+        graphics.FillRectangle(backgroundBrush, bgRect);
+        graphics.DrawString(yLabel, coordFont, coordBrush, 4, y - labelSize.Height / 2 + 1);
+    }
+
+    // 绘制垂直线和顶部 X 坐标
+    for (int x = 0; x < width; x += gridStep)
+    {
+        graphics.DrawLine(gridPen, x, 0, x, height);
+
+        string xLabel = x.ToString();
+        SizeF labelSize = graphics.MeasureString(xLabel, coordFont);
+        RectangleF bgRect = new RectangleF(x - labelSize.Width / 2, 2, labelSize.Width + 4, labelSize.Height + 2);
+        graphics.FillRectangle(backgroundBrush, bgRect);
+        graphics.DrawString(xLabel, coordFont, coordBrush, x - labelSize.Width / 2 + 2, 4);
+    }
+
     // 保存为 PNG
     bitmap.Save(absolutePath, ImageFormat.Png);
 
