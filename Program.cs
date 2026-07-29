@@ -8,9 +8,18 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 
 const string apiKey = "sk-ws-H.EIIMERL.YOZt.MEUCIEnJYx_DqGa8aGadlD1AzkUXKik4SYqkIaYjstnlNHpcAiEA40Q3ru1LsKM_OQ_HO32SbYCnl-M7lWgJhTWkIk3K5l0"; //"sk-c7366fcac5aa4023827e049e7a714705";
+
+const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
+const uint MOUSEEVENTF_LEFTUP   = 0x0004;
+
+[DllImport("user32.dll")]
+static extern void mouse_event(uint dwFlags, int dx, int dy, uint dwData, UIntPtr dwExtraInfo);
+
 AIAgent agent = new OpenAIClient(
         new ApiKeyCredential(apiKey),
         new OpenAIClientOptions
@@ -22,7 +31,9 @@ AIAgent agent = new OpenAIClient(
     .AsAIAgent(tools: [
         AIFunctionFactory.Create(AnalyzePicture),
         AIFunctionFactory.Create(Capture),
-        AIFunctionFactory.Create(MoveMouse)
+        AIFunctionFactory.Create(MoveMouse),
+        AIFunctionFactory.Create(Click),
+        AIFunctionFactory.Create(DoubleClick)
         ]);
 AgentSession session = await agent.CreateSessionAsync();
 
@@ -150,4 +161,25 @@ static string MoveMouse([Description("目标X像素坐标")]int x, [Description(
 {
     Cursor.Position = new Point(x, y);
     return $"Mouse moved to ({x},{y})";
+}
+
+[Description("在当前鼠标位置执行一次左键单击，并返回执行位置。")]
+static string Click()
+{
+    var pos = Cursor.Position;
+    mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, UIntPtr.Zero);
+    mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, UIntPtr.Zero);
+    return $"Clicked at ({pos.X},{pos.Y})";
+}
+
+[Description("在当前鼠标位置执行一次左键双击，并返回执行位置。")]
+static string DoubleClick()
+{
+    var pos = Cursor.Position;
+    mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, UIntPtr.Zero);
+    mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, UIntPtr.Zero);
+    Thread.Sleep(100);
+    mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, UIntPtr.Zero);
+    mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, UIntPtr.Zero);
+    return $"Double-clicked at ({pos.X},{pos.Y})";
 }
