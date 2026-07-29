@@ -101,22 +101,13 @@ static string Capture(string fileName)
 
     string absolutePath = Path.Combine(folder, fileName);
 
-    // 获取主屏幕逻辑尺寸
+    // 获取主屏幕逻辑尺寸及其在虚拟桌面中的位置
     var bounds = Screen.PrimaryScreen.Bounds;
 
-    // 考虑 DPI 缩放，确保截图覆盖完整的物理像素
-    float scaleX = 1f;
-    float scaleY = 1f;
-    using (var devGraphics = Graphics.FromHwnd(IntPtr.Zero))
-    {
-        scaleX = devGraphics.DpiX / 96f;
-        scaleY = devGraphics.DpiY / 96f;
-    }
-
-    int width = (int)Math.Round(bounds.Width * scaleX);
-    int height = (int)Math.Round(bounds.Height * scaleY);
-    int srcX = (int)Math.Round(bounds.X * scaleX);
-    int srcY = (int)Math.Round(bounds.Y * scaleY);
+    int width = bounds.Width;
+    int height = bounds.Height;
+    int srcX = bounds.X;
+    int srcY = bounds.Y;
 
     using var bitmap = new Bitmap(
         width,
@@ -125,7 +116,7 @@ static string Capture(string fileName)
 
     using var graphics = Graphics.FromImage(bitmap);
 
-    // 从屏幕复制物理像素
+    // 从屏幕复制像素（使用逻辑坐标，System.Windows.Forms 会自动处理桌面缩放）
     graphics.CopyFromScreen(
         srcX,
         srcY,
