@@ -159,49 +159,6 @@ static string DoubleClick()
     return $"Double-clicked at ({pos.X},{pos.Y})";
 }
 
-//[Description("截取屏幕上指定矩形区域的图片（可用来截取你想要的图标），并保存为PNG。")]
-//static string CaptureRegion(
-//    [Description("截图区域左上角X坐标")] int x,
-//    [Description("截图区域左上角Y坐标")] int y,
-//    [Description("截图区域宽度")] int width,
-//    [Description("截图区域高度")] int height,
-//    [Description("要保存的文件名")] string fileName)
-//{
-//    // 保存到当前程序运行的目录
-//    string folder = AppDomain.CurrentDomain.BaseDirectory;
-//    if (!Directory.Exists(folder))
-//        Directory.CreateDirectory(folder);
-
-//    // 确保文件名以 .png 结尾
-//    if (!fileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
-//        fileName += ".png";
-
-//    string absolutePath = Path.Combine(folder, fileName);
-
-//    // 获取主屏幕尺寸，修正越界坐标
-//    var screenBounds = Screen.PrimaryScreen.Bounds;
-
-//    int srcX = Math.Max(screenBounds.Left, Math.Min(screenBounds.Right, x));
-//    int srcY = Math.Max(screenBounds.Top, Math.Min(screenBounds.Bottom, y));
-//    int srcWidth = Math.Min(width, screenBounds.Right - srcX);
-//    int srcHeight = Math.Min(height, screenBounds.Bottom - srcY);
-
-//    if (srcWidth <= 0 || srcHeight <= 0)
-//    {
-//        return "指定的区域超出屏幕范围，无法截取。";
-//    }
-
-//    using var bitmap = new Bitmap(srcWidth, srcHeight, PixelFormat.Format32bppArgb);
-//    using var graphics = Graphics.FromImage(bitmap);
-
-//    graphics.CopyFromScreen(srcX, srcY, 0, 0, new Size(srcWidth, srcHeight));
-
-//    // 可选择在此绘制很小的坐标标签便于确认（不绘制网格）
-//    bitmap.Save(absolutePath, ImageFormat.Png);
-
-//    return $"区域截图已保存：{absolutePath}";
-//}
-
 [Description("根据图标描述找到图标在屏幕上的像素坐标。返回格式 x,y")]
 static string FindIconPosition([Description("图标描述")] string iconDescription)
 {
