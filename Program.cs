@@ -31,15 +31,14 @@ AIAgent agent = new OpenAIClient(
     )
     .GetChatClient("qwen3.7-plus") //("deepseek-v4-pro")
     .AsAIAgent(tools: [
-        AIFunctionFactory.Create(AnalyzePicture),
-        AIFunctionFactory.Create(Capture),
-        AIFunctionFactory.Create(MoveMouse),
-        AIFunctionFactory.Create(Click),
-        AIFunctionFactory.Create(DoubleClick),
-        //AIFunctionFactory.Create(CaptureRegion),
-        AIFunctionFactory.Create(FindIconPosition),
-        AIFunctionFactory.Create(GetMousePosition),
-        AIFunctionFactory.Create(GetScreenResolution),
+        //AIFunctionFactory.Create(AnalyzePicture),
+        //AIFunctionFactory.Create(Capture),
+        //AIFunctionFactory.Create(MoveMouse),
+        //AIFunctionFactory.Create(Click),
+        //AIFunctionFactory.Create(DoubleClick),
+        //AIFunctionFactory.Create(FindIconPosition),
+        //AIFunctionFactory.Create(GetMousePosition),
+        //AIFunctionFactory.Create(GetScreenResolution),
         AIFunctionFactory.Create(RunPowerShell)
         ]);
 AgentSession session = await agent.CreateSessionAsync();
