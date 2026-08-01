@@ -15,7 +15,7 @@ using System.Threading;
 using System.Windows.Forms;
 using UIAgentLib;
 
-const string apiKey = "sk-ws-H.EIIMERL.YOZt.MEUCIEnJYx_DqGa8aGadlD1AzkUXKik4SYqkIaYjstnlNHpcAiEA40Q3ru1LsKM_OQ_HO32SbYCnl-M7lWgJhTWkIk3K5l0"; //"sk-c7366fcac5aa4023827e049e7a714705";
+const string apiKey = "sk-c7366fcac5aa4023827e049e7a714705"; // "sk-ws-H.EIIMERL.YOZt.MEUCIEnJYx_DqGa8aGadlD1AzkUXKik4SYqkIaYjstnlNHpcAiEA40Q3ru1LsKM_OQ_HO32SbYCnl-M7lWgJhTWkIk3K5l0";
 
 const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
 const uint MOUSEEVENTF_LEFTUP   = 0x0004;
@@ -27,10 +27,10 @@ AIAgent agent = new OpenAIClient(
         new ApiKeyCredential(apiKey),
         new OpenAIClientOptions
         {
-            Endpoint = new Uri("https://dashscope.aliyuncs.com/compatible-mode/v1")
+            Endpoint = new Uri("https://api.deepseek.com") //("https://dashscope.aliyuncs.com/compatible-mode/v1")
         }
     )
-    .GetChatClient("qwen3.7-plus") //("deepseek-v4-pro")
+    .GetChatClient("deepseek-v4-pro") //("qwen3.7-plus")
     .AsAIAgent(tools: [
         AIFunctionFactory.Create(UIAgent.GetDesktopRootInfo),
         AIFunctionFactory.Create(UIAgent.GetFocusedElementInfo),
@@ -43,7 +43,8 @@ AIAgent agent = new OpenAIClient(
         AIFunctionFactory.Create(UIAgent.SetValueByName),
         AIFunctionFactory.Create(UIAgent.WaitForElementByAutomationId),
         AIFunctionFactory.Create(UIAgent.WaitForElementByName),
-        AIFunctionFactory.Create(RunPowerShell)
+        AIFunctionFactory.Create(MoveMouse)
+        //AIFunctionFactory.Create(RunPowerShell)
         ]);
 AgentSession session = await agent.CreateSessionAsync();
 
