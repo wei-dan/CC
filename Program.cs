@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using UIAgentLib;
+using OfficeOpenXml;
 
 const string apiKey = "sk-c7366fcac5aa4023827e049e7a714705"; // "sk-ws-H.EIIMERL.YOZt.MEUCIEnJYx_DqGa8aGadlD1AzkUXKik4SYqkIaYjstnlNHpcAiEA40Q3ru1LsKM_OQ_HO32SbYCnl-M7lWgJhTWkIk3K5l0";
 
@@ -43,7 +44,17 @@ AIAgent agent = new OpenAIClient(
         AIFunctionFactory.Create(UIAgent.SetValueByName),
         AIFunctionFactory.Create(UIAgent.WaitForElementByAutomationId),
         AIFunctionFactory.Create(UIAgent.WaitForElementByName),
-        AIFunctionFactory.Create(MoveMouse)
+        AIFunctionFactory.Create(MoveMouse),
+        AIFunctionFactory.Create(ExcelAgent.OpenExcelWorkbook),
+        AIFunctionFactory.Create(ExcelAgent.ReadExcelCell),
+        AIFunctionFactory.Create(ExcelAgent.WriteExcelCell),
+        AIFunctionFactory.Create(ExcelAgent.ReadExcelRange),
+        AIFunctionFactory.Create(ExcelAgent.GetExcelUsedRange),
+        AIFunctionFactory.Create(ExcelAgent.AppendExcelRow),
+        AIFunctionFactory.Create(ExcelAgent.CreateExcelWorkbook),
+        AIFunctionFactory.Create(ExcelAgent.AddExcelSheet),
+        AIFunctionFactory.Create(ExcelAgent.DeleteExcelSheet),
+        AIFunctionFactory.Create(ExcelAgent.CheckExcelFileExists)
         //AIFunctionFactory.Create(RunPowerShell)
         ]);
 AgentSession session = await agent.CreateSessionAsync();
