@@ -1,3 +1,9 @@
+// 如果 using System.Windows.Automation; 提示不存在，请确保：
+// 1. 项目目标框架为 net6.0‑windows（或更高版本）或 .NET Framework 4.7.2+；
+// 2. 安装了 NuGet 包：Microsoft.Windows.Compatibility 或 System.Windows.Automation；
+// 3. 或者手动添加对 UIAutomationClient.dll 和 UIAutomationTypes.dll 的引用。
+// 满足以上条件后，本文件即可正常编译。
+
 using System;
 using System.Diagnostics;
 using System.Threading;
