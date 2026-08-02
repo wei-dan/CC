@@ -1,1 +1,110 @@
-.aider*
+## .NET Core / .NET 5+ / .NET Framework
+
+# 构建输出
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.cache
+*.exe
+*.dll
+*.pdb
+*.nupkg
+*.snk
+
+# Visual Studio
+.vs/
+*.sln.docstates
+*.userprefs
+*.vsp
+*.vsa
+_ReSharper*/
+*.DotSettings.user
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+
+# 用户特定的文件
+*.rsuser
+
+# NuGet
+**/[Pp]ackages/*
+!**/[Pp]ackages/repositories.config
+# 如果启用了 packages 文件夹，应该签入 repositories.config
+*.nupkg
+**/packages/
+
+# NuGet 符号包
+*.snupkg
+
+# 代码覆盖率
+*.coverage
+*.coveragexml
+TestResults/
+
+# Roslyn 缓存
+*.ide/
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Windows 资源管理器缩略图
+Thumbs.db
+
+# macOS
+.DS_Store
+
+# Linux
+*~
+*.swp
+
+# 配置文件（可能包含密钥）
+appsettings.*.local.json
+*.Development.json
+*.Production.json
+appsettings.local.json
+
+# ASP.NET Core 环境变量覆盖文件
+.env
+
+# 临时文件
+*.tmp
+*.temp
+*.log
+
+# 用户机密
+secrets.json
+
+# Visual Studio Code
+.vscode/
+
+# 发布配置文件
+*.pubxml
+*.pubxml.user
+
+# 特定于项目的文件
+# 例如，如果项目使用 SQLite 数据库文件
+*.sqlite
+*.sqlite3
+*.db
+
+# 可能不需要的特定文件夹
+/upgrades/
+/Scripts/
+/Content/
+
+# Docker
+Dockerfile*
+.dockerignore
+docker-compose*
+
+# 测试文件输出
+**/TestResults/
+**/CoverageResults/
+
+# 本地设置
+*.local.*
