@@ -54,7 +54,19 @@ AIAgent agent = new OpenAIClient(
         AIFunctionFactory.Create(ExcelAgent.CreateExcelWorkbook),
         AIFunctionFactory.Create(ExcelAgent.AddExcelSheet),
         AIFunctionFactory.Create(ExcelAgent.DeleteExcelSheet),
-        AIFunctionFactory.Create(ExcelAgent.CheckExcelFileExists)
+        AIFunctionFactory.Create(ExcelAgent.CheckExcelFileExists),
+        AIFunctionFactory.Create(ExcelAgent.SetCellBackgroundColor),
+        AIFunctionFactory.Create(ExcelAgent.SetCellFontColor),
+        AIFunctionFactory.Create(ExcelAgent.SetCellFontBold),
+        AIFunctionFactory.Create(ExcelAgent.SetCellFontItalic),
+        AIFunctionFactory.Create(ExcelAgent.SetCellFontSize),
+        AIFunctionFactory.Create(ExcelAgent.SetCellBorder),
+        AIFunctionFactory.Create(ExcelAgent.SetColumnWidth),
+        AIFunctionFactory.Create(ExcelAgent.SetRowHeight),
+        AIFunctionFactory.Create(ExcelAgent.MergeCells),
+        AIFunctionFactory.Create(ExcelAgent.UnmergeCells),
+        AIFunctionFactory.Create(ExcelAgent.AutoFitColumns),
+        AIFunctionFactory.Create(ExcelAgent.AutoFitRows)
         //AIFunctionFactory.Create(RunPowerShell)
         ]);
 AgentSession session = await agent.CreateSessionAsync();
