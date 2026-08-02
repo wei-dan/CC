@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using OfficeOpenXml;
+using LicenseContext = OfficeOpenXml.LicenseContext;
 
 public static class ExcelAgent
 {
