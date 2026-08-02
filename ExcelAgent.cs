@@ -603,10 +603,26 @@ public static class ExcelAgent
             if (sheet == null)
                 return $"Error: sheet '{sheetName}' not found.";
 
+            int startRow, endRow;
             if (string.IsNullOrWhiteSpace(rangeAddress))
-                sheet.Cells.AutoFitRows();
+            {
+                if (sheet.Dimension == null)
+                    return "No data in worksheet; nothing to auto-fit.";
+                startRow = sheet.Dimension.Start.Row;
+                endRow = sheet.Dimension.End.Row;
+            }
             else
-                sheet.Cells[rangeAddress].AutoFitRows();
+            {
+                var range = sheet.Cells[rangeAddress];
+                startRow = range.Start.Row;
+                endRow = range.End.Row;
+            }
+
+            // 取消手动设置的行高，让 Excel 根据内容自动计算行高
+            for (int r = startRow; r <= endRow; r++)
+            {
+                sheet.Row(r).CustomHeight = false;
+            }
 
             package.Save();
             return $"Auto-fit rows done for sheet '{sheetName}'.";
