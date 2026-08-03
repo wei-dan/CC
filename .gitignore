@@ -108,3 +108,4 @@ docker-compose*
 
 # 本地设置
 *.local.*
+.aider*

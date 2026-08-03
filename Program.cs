@@ -56,8 +56,8 @@ AIAgent agent = new OpenAIClient(
                 AIFunctionFactory.Create(ExcelAgent.MergeCells),
                 AIFunctionFactory.Create(ExcelAgent.UnmergeCells),
                 AIFunctionFactory.Create(ExcelAgent.AutoFitColumns),
-                AIFunctionFactory.Create(ExcelAgent.AutoFitRows)
-                //AIFunctionFactory.Create(RunPowerShell)
+                AIFunctionFactory.Create(ExcelAgent.AutoFitRows),
+                AIFunctionFactory.Create(PowerShellAgent.RunPowerShell)
             ]
         },
         AIContextProviders = [new TextSearchProvider(SearchAdapter, textSearchOptions)]
