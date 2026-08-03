@@ -4,7 +4,6 @@ using OpenAI;
 using OpenAI.Chat;
 using System.ClientModel;
 using System.ComponentModel;
-using System.Diagnostics;
 
 const string apiKey = "sk-c7366fcac5aa4023827e049e7a714705"; // "sk-ws-H.EIIMERL.YOZt.MEUCIEnJYx_DqGa8aGadlD1AzkUXKik4SYqkIaYjstnlNHpcAiEA40Q3ru1LsKM_OQ_HO32SbYCnl-M7lWgJhTWkIk3K5l0";
 
@@ -79,29 +78,4 @@ while (true)
     var response = await agent.RunAsync(input, session);
 
     Console.WriteLine($"Bot: { response.Text }");
-}
-
-[Description("在本地 PowerShell 中运行命令并返回输出")]
-static string RunPowerShell([Description("要执行的 PowerShell 命令")] string script)
-{
-    var psi = new ProcessStartInfo
-    {
-        FileName = "powershell.exe",
-        Arguments = $"-NoProfile -NonInteractive -Command \"{script}\"",
-        RedirectStandardOutput = true,
-        RedirectStandardError = true,
-        UseShellExecute = false,
-        CreateNoWindow = true,
-        WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory
-    };
-
-    using var process = Process.Start(psi);
-    string stdout = process!.StandardOutput.ReadToEnd();
-    string stderr = process.StandardError.ReadToEnd();
-    process.WaitForExit();
-
-    if (!string.IsNullOrWhiteSpace(stderr))
-        return $"Error: {stderr}{Environment.NewLine}{stdout}";
-
-    return stdout;
 }
