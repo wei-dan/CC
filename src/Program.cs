@@ -1,34 +1,70 @@
+using CommunityToolkit.VectorData.SqliteVec;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
+using Microsoft.Extensions.VectorData;
 using OpenAI;
 using OpenAI.Chat;
 using System.ClientModel;
 using System.ComponentModel;
 
-const string apiKey = "sk-c7366fcac5aa4023827e049e7a714705"; // "sk-ws-H.EIIMERL.YOZt.MEUCIEnJYx_DqGa8aGadlD1AzkUXKik4SYqkIaYjstnlNHpcAiEA40Q3ru1LsKM_OQ_HO32SbYCnl-M7lWgJhTWkIk3K5l0";
+const string apiKey = "sk-c7366fcac5aa4023827e049e7a714705";
+
+var embeddingGenerator = new OllamaEmbeddingGenerator(
+                    new Uri("http://localhost:11434"),
+                    "qwen3-embedding"
+                );
+
+var vectorStore = new SqliteVectorStore("Data Source=vector.db");
+var collection = vectorStore.GetCollection<int, Hotel>("skhotels");
+await collection.EnsureCollectionExistsAsync();
+await collection.UpsertAsync(new Hotel
+{
+    HotelId = 1,
+    HotelName = "Hotel California",
+    Description = "我老婆的名字叫郭敏，我女儿叫魏伊诺",
+    DescriptionEmbedding = (await embeddingGenerator.GenerateAsync("我老婆的名字叫郭敏，我女儿叫魏伊诺")).Vector
+});
+
 
 TextSearchProviderOptions textSearchOptions = new()
 {
     SearchTime = TextSearchProviderOptions.TextSearchBehavior.BeforeAIInvoke,
 };
-static Task<IEnumerable<TextSearchProvider.TextSearchResult>> SearchAdapter(string query, CancellationToken cancellationToken)
+static async Task<IEnumerable<TextSearchProvider.TextSearchResult>> SearchAdapter(string query, CancellationToken cancellationToken)
 {
+    var vectorStore = new SqliteVectorStore("Data Source=vector.db");
+    var collection = vectorStore.GetCollection<int, Hotel>("skhotels");
     List<TextSearchProvider.TextSearchResult> results = new();
-    //results.Add(new()
-    //{
-    //    Text = "I Like Play basketball"
-    //});
-    return Task.FromResult<IEnumerable<TextSearchProvider.TextSearchResult>>(results);
+    var embeddingGenerator = new OllamaEmbeddingGenerator(
+                    new Uri("http://localhost:11434"),
+                    "qwen3-embedding"
+                );
+    var sss = await embeddingGenerator.GenerateAsync(query);
+    await using var enumerator = collection.SearchAsync(sss.Vector, 3).GetAsyncEnumerator(cancellationToken);
+    while (await enumerator.MoveNextAsync())
+    {
+        var s = enumerator.Current;
+        if (s.Score > 0.3)
+        {
+            continue;
+        }
+        results.Add(new TextSearchProvider.TextSearchResult
+        {
+            Text = s.Record?.Description ?? string.Empty
+        });
+    }
+
+    return results;
 }
 
 AIAgent agent = new OpenAIClient(
         new ApiKeyCredential(apiKey),
         new OpenAIClientOptions
         {
-            Endpoint = new Uri("https://api.deepseek.com") //("https://dashscope.aliyuncs.com/compatible-mode/v1")
+            Endpoint = new Uri("https://api.deepseek.com")
         }
     )
-    .GetChatClient("deepseek-v4-pro") //("qwen3.7-plus")
+    .GetChatClient("deepseek-v4-pro")
     .AsAIAgent(new ChatClientAgentOptions
     {
         ChatOptions = new()
@@ -78,4 +114,20 @@ while (true)
     var response = await agent.RunAsync(input, session);
 
     Console.WriteLine($"Bot: { response.Text }");
+}
+
+
+public class Hotel
+{
+    [VectorStoreKey]
+    public int HotelId { get; set; }
+
+    [VectorStoreData(StorageName = "hotel_name")]
+    public string? HotelName { get; set; }
+
+    [VectorStoreData(StorageName = "hotel_description")]
+    public string? Description { get; set; }
+
+    [VectorStoreVector(dimensions: 4096, DistanceFunction = DistanceFunction.CosineDistance)]
+    public ReadOnlyMemory<float>? DescriptionEmbedding { get; set; }
 }
