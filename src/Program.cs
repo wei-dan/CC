@@ -93,7 +93,11 @@ AIAgent agent = new OpenAIClient(
                 AIFunctionFactory.Create(ExcelAgent.UnmergeCells),
                 AIFunctionFactory.Create(ExcelAgent.AutoFitColumns),
                 AIFunctionFactory.Create(ExcelAgent.AutoFitRows),
-                AIFunctionFactory.Create(PowerShellAgent.RunPowerShell)
+                AIFunctionFactory.Create(PowerShellAgent.RunPowerShell),
+                AIFunctionFactory.Create(LinuxAgent.RunLinuxCommand),
+                AIFunctionFactory.Create(LinuxAgent.GetDebianVersion),
+                AIFunctionFactory.Create(LinuxAgent.UpdatePackageList),
+                AIFunctionFactory.Create(LinuxAgent.InstallPackage)
             ]
         },
         AIContextProviders = [new TextSearchProvider(SearchAdapter, textSearchOptions)]
