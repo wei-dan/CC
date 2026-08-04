@@ -32,23 +32,4 @@ public static class LinuxAgent
             return $"Exception: {ex.Message}";
         }
     }
-
-    [Description("Get the current Debian version information (lsb_release -a).")]
-    public static string GetDebianVersion()
-    {
-        return RunLinuxCommand("lsb_release -a");
-    }
-
-    [Description("Update the APT package list (runs 'apt-get update').")]
-    public static string UpdatePackageList()
-    {
-        return RunLinuxCommand("apt-get update -qq");
-    }
-
-    [Description("Install a package via APT (apt-get install -y).")]
-    public static string InstallPackage(
-        [Description("Name of the package to install.")] string packageName)
-    {
-        return RunLinuxCommand($"apt-get install -y {packageName}");
-    }
 }
