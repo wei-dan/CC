@@ -7,19 +7,19 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 
-public class Hotel
+public class DocumentChunk
 {
     [VectorStoreKey]
-    public int HotelId { get; set; }
+    public int Id { get; set; }
 
-    [VectorStoreData(StorageName = "hotel_name")]
-    public string? HotelName { get; set; }
+    [VectorStoreData(StorageName = "title")]
+    public string? Title { get; set; }
 
-    [VectorStoreData(StorageName = "hotel_description")]
-    public string? Description { get; set; }
+    [VectorStoreData(StorageName = "content")]
+    public string? Content { get; set; }
 
     [VectorStoreVector(dimensions: 4096, DistanceFunction = DistanceFunction.CosineDistance)]
-    public ReadOnlyMemory<float>? DescriptionEmbedding { get; set; }
+    public ReadOnlyMemory<float>? Embedding { get; set; }
 }
 
 public static class VectorDatabaseAgent
@@ -38,7 +38,7 @@ public static class VectorDatabaseAgent
         );
 
         var vectorStore = new SqliteVectorStore(ConnectionString);
-        var collection = vectorStore.GetCollection<int, Hotel>(CollectionName);
+        var collection = vectorStore.GetCollection<int, DocumentChunk>(CollectionName);
         await collection.EnsureCollectionExistsAsync();
 
         var embedding = (await embeddingGenerator.GenerateAsync(text)).Vector;
@@ -49,12 +49,12 @@ public static class VectorDatabaseAgent
             id = int.MaxValue;
         }
 
-        await collection.UpsertAsync(new Hotel
+        await collection.UpsertAsync(new DocumentChunk
         {
-            HotelId = id,
-            HotelName = chunkId ?? $"chunk_{id}",
-            Description = text,
-            DescriptionEmbedding = embedding
+            Id = id,
+            Title = chunkId ?? $"chunk_{id}",
+            Content = text,
+            Embedding = embedding
         });
 
         return $"已写入向量数据库，chunkId: {chunkId ?? id.ToString()}";

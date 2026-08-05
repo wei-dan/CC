@@ -18,7 +18,7 @@ TextSearchProviderOptions textSearchOptions = new()
 static async Task<IEnumerable<TextSearchProvider.TextSearchResult>> SearchAdapter(string query, CancellationToken cancellationToken)
 {
     var vectorStore = new SqliteVectorStore("Data Source=vector.db");
-    var collection = vectorStore.GetCollection<int, Hotel>("skhotels");
+    var collection = vectorStore.GetCollection<int, DocumentChunk>("skhotels");
     List<TextSearchProvider.TextSearchResult> results = new();
     var embeddingGenerator = new OllamaEmbeddingGenerator(
                     new Uri("http://localhost:11434"),
@@ -35,7 +35,7 @@ static async Task<IEnumerable<TextSearchProvider.TextSearchResult>> SearchAdapte
         }
         results.Add(new TextSearchProvider.TextSearchResult
         {
-            Text = s.Record?.Description ?? string.Empty
+            Text = s.Record?.Content ?? string.Empty
         });
     }
 
