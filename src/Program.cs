@@ -113,13 +113,37 @@ while (true)
 
     Console.ForegroundColor = ConsoleColor.Cyan;
     Console.Write("Bot: ");
+
+    int windowWidth = Console.WindowWidth;
+    int lineLength = 5; // "Bot: " 的长度
+
     await foreach (var update in agent.RunStreamingAsync(input, session))
     {
-        if (!string.IsNullOrEmpty(update?.Text))
+        if (string.IsNullOrEmpty(update?.Text))
         {
-            Console.Write(update.Text);
+            continue;
+        }
+
+        foreach (char ch in update.Text)
+        {
+            if (ch == '\n')
+            {
+                Console.WriteLine();
+                lineLength = 0;
+                continue;
+            }
+
+            Console.Write(ch);
+            lineLength++;
+
+            if (lineLength >= windowWidth)
+            {
+                Console.WriteLine();
+                lineLength = 0;
+            }
         }
     }
+
     Console.ResetColor();
     Console.WriteLine();
 }
