@@ -15,25 +15,37 @@ TextSearchProviderOptions textSearchOptions = new()
 };
 static async Task<IEnumerable<TextSearchProvider.TextSearchResult>> SearchAdapter(string query, CancellationToken cancellationToken)
 {
-    var vectorStore = new SqliteVectorStore("Data Source=vector.db");
-    var collection = vectorStore.GetCollection<int, DocumentChunk>("skhotels");
-    List<TextSearchProvider.TextSearchResult> results = new();
-    var embeddingGenerator = new OllamaEmbeddingGenerator(
-                    new Uri("http://localhost:11434"),
-                    "qwen3-embedding"
-                );
-    var sss = await embeddingGenerator.GenerateAsync(query);
-    await using var enumerator = collection.SearchAsync(sss.Vector, 3).GetAsyncEnumerator(cancellationToken);
-    while (await enumerator.MoveNextAsync())
+    var store = new SqliteVectorStore("Data Source=vector.db");
+    var chunkCollection = store.GetCollection<int, DocumentChunk>("skhotels");
+    var results = new List<TextSearchProvider.TextSearchResult>();
+
+    var queryVector = default(ReadOnlyMemory<float>);
+    try
     {
-        var s = enumerator.Current;
-        if (s.Score > 0.3)
+        var queryEmbedder = new OllamaEmbeddingGenerator(
+            new Uri("http://localhost:11434"),
+            "qwen3-embedding"
+        );
+        var queryEmbedding = await queryEmbedder.GenerateAsync(query);
+        queryVector = queryEmbedding.Vector;
+    }
+    catch (Exception)
+    {
+        // 如果无法访问 Ollama 模型，直接返回空结果
+        return results;
+    }
+
+    await using var searchEnumerator = chunkCollection.SearchAsync(queryVector, 3).GetAsyncEnumerator(cancellationToken);
+    while (await searchEnumerator.MoveNextAsync())
+    {
+        var hit = searchEnumerator.Current;
+        if (hit.Score > 0.3)
         {
             continue;
         }
         results.Add(new TextSearchProvider.TextSearchResult
         {
-            Text = s.Record?.Content ?? string.Empty
+            Text = hit.Record?.Content ?? string.Empty
         });
     }
 
