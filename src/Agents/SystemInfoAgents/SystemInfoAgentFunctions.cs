@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -10,6 +11,7 @@ public static class SystemInfoAgentFunctions
     /// 获取当前电脑的系统信息
     /// </summary>
     /// <returns>格式化的系统信息字符串</returns>
+    [Description("获取当前电脑的系统信息")]
     public static string GetSystemInfo()
     {
         var sb = new StringBuilder();

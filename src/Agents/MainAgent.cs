@@ -1,6 +1,7 @@
 using CC.Agents.ExcelAgents;
 using CC.Agents.LinuxAgents;
 using CC.Agents.PowerShellAgents;
+using CC.Agents.SystemInfoAgents;
 using CommunityToolkit.VectorData.SqliteVec;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
@@ -22,39 +23,40 @@ public static class MainAgent
         };
         static async Task<IEnumerable<TextSearchProvider.TextSearchResult>> SearchAdapter(string query, CancellationToken cancellationToken)
         {
-            var store = new SqliteVectorStore("Data Source=vector.db");
-            var chunkCollection = store.GetCollection<int, DocumentChunk>("skhotels");
             var results = new List<TextSearchProvider.TextSearchResult>();
 
-            var queryVector = default(ReadOnlyMemory<float>);
-            try
-            {
-                var queryEmbedder = new OllamaEmbeddingGenerator(
-                    new Uri("http://localhost:11434"),
-                    "qwen3-embedding"
-                );
-                var queryEmbedding = await queryEmbedder.GenerateAsync(query);
-                queryVector = queryEmbedding.Vector;
-            }
-            catch (Exception)
-            {
-                // 如果无法访问 Ollama 模型，直接返回空结果
-                return results;
-            }
+            //var store = new SqliteVectorStore("Data Source=vector.db");
+            //var chunkCollection = store.GetCollection<int, DocumentChunk>("skhotels");
 
-            await using var searchEnumerator = chunkCollection.SearchAsync(queryVector, 3).GetAsyncEnumerator(cancellationToken);
-            while (await searchEnumerator.MoveNextAsync())
-            {
-                var hit = searchEnumerator.Current;
-                if (hit.Score > 0.3)
-                {
-                    continue;
-                }
-                results.Add(new TextSearchProvider.TextSearchResult
-                {
-                    Text = hit.Record?.Content ?? string.Empty
-                });
-            }
+            //var queryVector = default(ReadOnlyMemory<float>);
+            //try
+            //{
+            //    var queryEmbedder = new OllamaEmbeddingGenerator(
+            //        new Uri("http://localhost:11434"),
+            //        "qwen3-embedding"
+            //    );
+            //    var queryEmbedding = await queryEmbedder.GenerateAsync(query);
+            //    queryVector = queryEmbedding.Vector;
+            //}
+            //catch (Exception)
+            //{
+            //    // 如果无法访问 Ollama 模型，直接返回空结果
+            //    return results;
+            //}
+
+            //await using var searchEnumerator = chunkCollection.SearchAsync(queryVector, 3).GetAsyncEnumerator(cancellationToken);
+            //while (await searchEnumerator.MoveNextAsync())
+            //{
+            //    var hit = searchEnumerator.Current;
+            //    if (hit.Score > 0.3)
+            //    {
+            //        continue;
+            //    }
+            //    results.Add(new TextSearchProvider.TextSearchResult
+            //    {
+            //        Text = hit.Record?.Content ?? string.Empty
+            //    });
+            //}
 
             return results;
         }
@@ -72,21 +74,72 @@ public static class MainAgent
                 ChatOptions = new()
                 {
                     Instructions = """
-                        你是一个功能强大的智能助手，能够通过调用子代理来处理多种任务。
-                        你可以处理 Excel 表格（打开、读取、写入、设置样式、合并单元格等）、
-                        执行 PowerShell 命令、执行 Linux 命令。
+                        你是一个智能助手协调器（Supervisor Agent）。
 
-                        当用户提出与表格操作相关的需求时，你应该调用 Excel 子代理来完成；当用户要求执行 PowerShell 脚本时，调用 PowerShell 子代理；当用户要求执行 Linux 命令或操作 Linux 环境时，调用 Linux 子代理。
+                        你的职责不是直接执行任务，而是根据用户需求选择合适的专业子代理。
 
-                        如果用户的问题不涉及以上子代理能力，你可以直接使用自己的知识进行回答。
-                        在调用子代理之前，如果用户描述不明确，请先向用户确认具体需求再执行。
-                        所有操作应返回清晰、简洁的结果说明。
+                        你可以调用以下子代理：
+
+                        1. ExcelAgent
+                        负责所有 Excel 相关任务：
+                        - 创建和打开 Excel 文件
+                        - 读取和修改单元格
+                        - 工作表管理
+                        - 单元格格式设置
+                        - 表格数据处理
+
+
+                        2. PowerShellAgent
+                        负责 Windows 系统操作：
+                        - 执行 PowerShell 命令
+                        - 管理 Windows 文件
+                        - 查询系统状态
+                        - 执行 Windows 自动化任务
+
+
+                        3. LinuxAgent
+                        负责 Linux 系统操作：
+                        - 执行 Bash 命令
+                        - 管理 Linux 文件
+                        - 查询 Linux 系统状态
+                        - 执行 Linux 自动化任务
+
+                        4. SystemInfoAgent
+                        判断当前系统环境。
+
+
+                        任务分配规则：
+
+                        - 用户请求 Excel 或表格操作时，调用 ExcelAgent。
+                        - 用户请求 Windows 命令或 PowerShell 操作时，调用 PowerShellAgent。
+                        - 用户请求 Linux 命令或 Linux 环境操作时，调用 LinuxAgent。
+
+
+                        如果一个请求涉及多个领域，可以依次调用多个子代理，并综合它们的结果。
+
+
+                        如果无法判断用户需求属于哪个代理：
+                        先向用户询问澄清问题。
+
+
+                        不要自己执行 Excel、PowerShell 或 Linux 操作。
+                        这些任务必须委托给对应子代理。
+
+
+                        对于普通知识问答，可以直接回答用户。
+
+
+                        回答用户时：
+                        - 简洁
+                        - 明确
+                        - 说明执行结果
                         """,
                     Tools =
                     [
                         ExcelAgent.CreateExcelAgent().AsAIFunction(),
                         LinuxAgent.CreateLinuxAgent().AsAIFunction(),
-                        PowerShellAgent.CreatePowerShellAgent().AsAIFunction()
+                        PowerShellAgent.CreatePowerShellAgent().AsAIFunction(),
+                        SystemInfoAgent.CreateSystemInfoAgent().AsAIFunction()
                     ]
                 },
                 AIContextProviders = [new TextSearchProvider(SearchAdapter, textSearchOptions)]

@@ -5,9 +5,11 @@ using System.Linq;
 using OfficeOpenXml;
 using LicenseContext = OfficeOpenXml.LicenseContext;
 
-public static partial class ExcelAgent
+namespace CC.Agents.ExcelAgents;
+
+public static class ExcelWorkbookAgentFunctions
 {
-    static ExcelAgent()
+    static ExcelWorkbookAgentFunctions()
     {
         // Set LicenseContext to NonCommercial if you do not have a valid license.
         // For production use, obtain and set a license key.

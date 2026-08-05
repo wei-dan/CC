@@ -4,7 +4,9 @@ using System.ComponentModel;
 using System.IO;
 using OfficeOpenXml;
 
-public static partial class ExcelAgent
+namespace CC.Agents.ExcelAgents;
+
+public static class ExcelDataAgentFunctions
 {
     [Description("Read the text value of a single cell (e.g., A1) in the specified worksheet.")]
     public static string ReadExcelCell(

@@ -1,7 +1,9 @@
 using System.ComponentModel;
 using System.Diagnostics;
 
-public static class PowerShellAgent
+namespace CC.Agents.PowerShellAgents;
+
+public static class PowerShellAgentFunctions
 {
     [Description("在本地 PowerShell 中运行命令并返回输出")]
     public static string RunPowerShell([Description("要执行的 PowerShell 命令")] string script)

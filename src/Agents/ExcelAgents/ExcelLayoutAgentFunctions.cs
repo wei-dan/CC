@@ -3,7 +3,9 @@ using System.ComponentModel;
 using System.IO;
 using OfficeOpenXml;
 
-public static partial class ExcelAgent
+namespace CC.Agents.ExcelAgents;
+
+public static class ExcelLayoutAgentFunctions
 {
     [Description("Set the width of a column (e.g., A, B).")]
     public static string SetColumnWidth(

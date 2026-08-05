@@ -5,7 +5,9 @@ using System.IO;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 
-public static partial class ExcelAgent
+namespace CC.Agents.ExcelAgents;
+
+public static class ExcelStyleAgentFunctions
 {
     [Description("Set the background color of a single cell using a color name or hex code (e.g., Red, #FF0000).")]
     public static string SetCellBackgroundColor(

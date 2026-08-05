@@ -1,14 +1,15 @@
+using CommunityToolkit.VectorData.SqliteVec;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using OpenAI;
 using OpenAI.Chat;
 using System.ClientModel;
 
-namespace CC.Agents.SystemInfoAgents;
+namespace CC.Agents.LinuxAgents;
 
-public static class SystemInfoAgent
+public static class LinuxAgent
 {
-    public static AIAgent CreateSystemInfoAgent()
+    public static AIAgent CreateLinuxAgent()
     {
         const string apiKey = "sk-c7366fcac5aa4023827e049e7a714705";
 
@@ -19,6 +20,7 @@ public static class SystemInfoAgent
         static async Task<IEnumerable<TextSearchProvider.TextSearchResult>> SearchAdapter(string query, CancellationToken cancellationToken)
         {
             var results = new List<TextSearchProvider.TextSearchResult>();
+
             return results;
         }
 
@@ -32,12 +34,12 @@ public static class SystemInfoAgent
             .GetChatClient("deepseek-v4-pro")
             .AsAIAgent(new ChatClientAgentOptions
             {
-                Name = "SystemInfoAgent",
+                Name = "LinuxAgent",
                 ChatOptions = new()
                 {
                     Tools =
                     [
-                        AIFunctionFactory.Create(SystemInfoAgentFunctions.GetSystemInfo)
+                        AIFunctionFactory.Create(LinuxAgentFunctions.RunLinuxCommand)
                     ]
                 },
                 AIContextProviders = [new TextSearchProvider(SearchAdapter, textSearchOptions)]

@@ -1,7 +1,9 @@
 using System.ComponentModel;
 using System.Diagnostics;
 
-public static class LinuxAgent
+namespace CC.Agents.LinuxAgents;
+
+public static class LinuxAgentFunctions
 {
     [Description("Execute an arbitrary shell command in a Debian Linux environment and return its standard output.")]
     public static string RunLinuxCommand(
