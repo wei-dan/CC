@@ -112,9 +112,15 @@ while (true)
         continue;
     }
 
-    var response = await agent.RunAsync(input, session);
-
-    Console.WriteLine($"Bot: { response.Text }");
+    Console.Write("Bot: ");
+    await foreach (var update in agent.RunStreamingAsync(input, session))
+    {
+        if (!string.IsNullOrEmpty(update?.Text))
+        {
+            Console.Write(update.Text);
+        }
+    }
+    Console.WriteLine();
 }
 
 
