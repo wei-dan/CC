@@ -101,14 +101,17 @@ AgentSession session = await agent.CreateSessionAsync();
 
 while (true)
 {
+    Console.ForegroundColor = ConsoleColor.Green;
     Console.Write("You: ");
     string? input = Console.ReadLine();
+    Console.ResetColor();
 
     if (input is null)
     {
         continue;
     }
 
+    Console.ForegroundColor = ConsoleColor.Cyan;
     Console.Write("Bot: ");
     await foreach (var update in agent.RunStreamingAsync(input, session))
     {
@@ -117,5 +120,6 @@ while (true)
             Console.Write(update.Text);
         }
     }
+    Console.ResetColor();
     Console.WriteLine();
 }
