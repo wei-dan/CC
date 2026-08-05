@@ -9,8 +9,6 @@ using System.ComponentModel;
 
 const string apiKey = "sk-c7366fcac5aa4023827e049e7a714705";
 
-await VectorDatabaseAgent.AddTextChunk("我老婆的名字叫郭敏，我女儿叫魏伊诺", "demo-1");
-
 TextSearchProviderOptions textSearchOptions = new()
 {
     SearchTime = TextSearchProviderOptions.TextSearchBehavior.BeforeAIInvoke,
