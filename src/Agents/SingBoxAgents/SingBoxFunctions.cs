@@ -384,12 +384,13 @@ public static class SingBoxFunctions
     }
     """;
 
-    [Description("生成一个基础 sing-box mixed + tun 模式配置文件，并保存到 cashPath 目录下的 sing-box-config.json。需要提供代理服务器地址、端口、UUID以及配置文件保存目录")]
+    [Description("生成一个基础 sing-box mixed + tun 模式配置文件，并保存到 path 目录下的 config.json。需要提供代理服务器地址、端口、UUID以及配置文件保存目录")]
     public static string GetSingBoxConfig(
         [Description("代理服务器地址，例如域名或IP地址")]string server,
         [Description("代理服务器端口")]string serverPort,
         [Description("VMess UUID")] string uuid,
-        [Description("配置文件和缓存文件所在目录，例如 /var/lib/sing-box 或 C:\\sing-box")] string cashPath)
+        [Description("配置文件和缓存文件所在目录，例如 linux: /var/lib/sing-box 或 windows: C:\\sing-box")] string cashPath,
+        [Description("配置文件保存路径，例如 /etc/sing-box 或 C:\\sing-box")] string path)
     {
        var config = BasicMixedTemplate.Replace("{{server}}", server)
                                 .Replace("{{server_port}}", serverPort)
@@ -397,9 +398,9 @@ public static class SingBoxFunctions
                                 .Replace("{{cashPath}}", cashPath);
 
        // 确保目录存在
-       Directory.CreateDirectory(cashPath);
+       Directory.CreateDirectory(path);
 
-       var configFilePath = Path.Combine(cashPath, "sing-box-config.json");
+       var configFilePath = Path.Combine(path, "config.json");
        File.WriteAllText(configFilePath, config);
 
        return configFilePath;

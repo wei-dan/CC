@@ -1,6 +1,7 @@
 using CC.Agents.ExcelAgents;
 using CC.Agents.LinuxAgents;
 using CC.Agents.PowerShellAgents;
+using CC.Agents.SingBoxAgents;
 using CC.Agents.SystemInfoAgents;
 using CommunityToolkit.VectorData.SqliteVec;
 using Microsoft.Agents.AI;
@@ -107,6 +108,9 @@ public static class MainAgent
                         4. SystemInfoAgent
                         判断当前系统环境。
 
+                        5. SingBoxAgent
+                        生成sing-box配置文件。
+
 
                         任务分配规则：
 
@@ -139,7 +143,8 @@ public static class MainAgent
                         ExcelAgent.CreateExcelAgent().AsAIFunction(),
                         LinuxAgent.CreateLinuxAgent().AsAIFunction(),
                         PowerShellAgent.CreatePowerShellAgent().AsAIFunction(),
-                        SystemInfoAgent.CreateSystemInfoAgent().AsAIFunction()
+                        SystemInfoAgent.CreateSystemInfoAgent().AsAIFunction(),
+                        SingBoxAgent.CreateSingBoxAgent().AsAIFunction()
                     ]
                 },
                 AIContextProviders = [new TextSearchProvider(SearchAdapter, textSearchOptions)]
