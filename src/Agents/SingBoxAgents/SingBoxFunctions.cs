@@ -405,13 +405,21 @@ public static class SingBoxFunctions
        return configFilePath;
     }
 
-    [Description("在Linux系统上安装sing-box（使用官方安装脚本）。返回安装过程的输出。")]
+    [Description("在Linux系统上安装sing-box（通过官方APT仓库安装）。返回安装过程的输出。")]
     public static string InstallSingBox()
     {
-        const string installCommand = "curl -fsSL https://sing-box.app/install.sh | sh 2>&1";
-        string command = Environment.UserName == "root"
-            ? installCommand
-            : "curl -fsSL https://sing-box.app/install.sh | sudo -n sh 2>&1";
+        string sudo = Environment.UserName == "root" ? "" : "sudo -n ";
+
+        string repoConfig = "Types: deb\\nURIs: https://deb.sagernet.org/\\nSuites: *\\nComponents: *\\nEnabled: yes\\nSigned-By: /etc/apt/keyrings/sagernet.asc";
+
+        string command =
+            $"set -e; exec 2>&1; " +
+            $"{sudo}mkdir -p /etc/apt/keyrings && " +
+            $"{sudo}curl -fsSL https://sing-box.app/gpg.key -o /etc/apt/keyrings/sagernet.asc && " +
+            $"{sudo}chmod a+r /etc/apt/keyrings/sagernet.asc && " +
+            $"echo $'{repoConfig}' | {sudo}tee /etc/apt/sources.list.d/sagernet.sources && " +
+            $"{sudo}apt-get update && " +
+            $"{sudo}apt-get install -y sing-box";
 
         using var process = new Process();
         process.StartInfo.FileName = "/bin/bash";
