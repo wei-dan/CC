@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 
 namespace CC.Agents.SingBoxAgents;
@@ -402,5 +403,28 @@ public static class SingBoxFunctions
        File.WriteAllText(configFilePath, config);
 
        return configFilePath;
+    }
+
+    [Description("在Linux系统上安装sing-box（使用官方安装脚本）。返回安装过程的输出。")]
+    public static string InstallSingBox()
+    {
+        const string installCommand = "curl -fsSL https://sing-box.app/install.sh | sh 2>&1";
+        string command = Environment.UserName == "root"
+            ? installCommand
+            : "curl -fsSL https://sing-box.app/install.sh | sudo -n sh 2>&1";
+
+        using var process = new Process();
+        process.StartInfo.FileName = "/bin/bash";
+        process.StartInfo.ArgumentList.Add("-c");
+        process.StartInfo.ArgumentList.Add(command);
+        process.StartInfo.UseShellExecute = false;
+        process.StartInfo.RedirectStandardOutput = true;
+        process.StartInfo.RedirectStandardError = false;
+        process.Start();
+
+        string output = process.StandardOutput.ReadToEnd();
+        process.WaitForExit();
+
+        return process.ExitCode == 0 ? output : $"安装失败 (退出码: {process.ExitCode})\n{output}";
     } 
 }
