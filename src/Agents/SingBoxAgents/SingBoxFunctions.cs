@@ -231,7 +231,7 @@ public static class SingBoxFunctions
           {
             "outbound": "direct",
             "process_name": [
-              
+              "sing-box"
             ]
           },
           {
@@ -344,28 +344,28 @@ public static class SingBoxFunctions
             "tag": "geosite-google",
             "type": "remote",
             "format": "binary",
-            "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-google.srs",
+            "url": "https://gitee.com/wei_dan/CC/raw/master/geosite-google.srs",
             "download_detour": "proxy"
           },
           {
             "tag": "geosite-private",
             "type": "remote",
             "format": "binary",
-            "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-private.srs",
+            "url": "https://gitee.com/wei_dan/CC/raw/master/geosite-private.srs",
             "download_detour": "proxy"
           },
           {
             "tag": "geosite-cn",
             "type": "remote",
             "format": "binary",
-            "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-cn.srs",
+            "url": "https://gitee.com/wei_dan/CC/raw/master/geosite-cn.srs",
             "download_detour": "proxy"
           },
           {
             "tag": "geoip-cn",
             "type": "remote",
             "format": "binary",
-            "url": "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs",
+            "url": "https://gitee.com/wei_dan/CC/raw/master/geoip-cn.srs",
             "download_detour": "proxy"
           }
         ],
@@ -374,7 +374,7 @@ public static class SingBoxFunctions
       "experimental": {
         "cache_file": {
           "enabled": true,
-          "path": "{{cashPath}}/cache.db",
+          "path": "cache.db",
           "store_fakeip": false
         },
         "clash_api": {
@@ -389,13 +389,11 @@ public static class SingBoxFunctions
         [Description("代理服务器地址，例如域名或IP地址")]string server,
         [Description("代理服务器端口")]string serverPort,
         [Description("VMess UUID")] string uuid,
-        [Description("配置文件和缓存文件所在目录，例如 linux: /var/lib/sing-box 或 windows: C:\\sing-box")] string cashPath,
         [Description("配置文件保存路径，例如 /etc/sing-box 或 C:\\sing-box")] string path)
     {
-       var config = BasicMixedTemplate.Replace("{{server}}", server)
-                                .Replace("{{server_port}}", serverPort)
-                                .Replace("{{uuid}}", uuid)
-                                .Replace("{{cashPath}}", cashPath);
+        var config = BasicMixedTemplate.Replace("{{server}}", server)
+                                 .Replace("{{server_port}}", serverPort)
+                                 .Replace("{{uuid}}", uuid);
 
        // 确保目录存在
        Directory.CreateDirectory(path);
