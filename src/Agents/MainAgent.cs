@@ -109,7 +109,8 @@ public static class MainAgent
                         判断当前系统环境。
 
                         5. SingBoxAgent
-                        生成sing-box配置文件。
+                        - 安装sing-box 
+                        - 生成sing-box配置文件。
 
 
                         任务分配规则：
@@ -117,6 +118,8 @@ public static class MainAgent
                         - 用户请求 Excel 或表格操作时，调用 ExcelAgent。
                         - 用户请求 Windows 命令或 PowerShell 操作时，调用 PowerShellAgent。
                         - 用户请求 Linux 命令或 Linux 环境操作时，调用 LinuxAgent。
+                        - 用户请求系统信息时，调用 SystemInfoAgent。
+                        - 用户请求 SingBox 安装或配置时，调用 SingBoxAgent。
 
 
                         如果一个请求涉及多个领域，可以依次调用多个子代理，并综合它们的结果。

@@ -35,10 +35,11 @@ public static class SingBoxAgent
                 Name = "SingBoxAgent",
                 ChatOptions = new()
                 {
-                    Instructions = "你是一个智能助手，负责生成sing-box配置文件。",
+                    Instructions = "你是一个智能助手，负责安装sing-box并和生成sing-box配置文件。",
                     Tools =
                     [
-                        AIFunctionFactory.Create(SingBoxFunctions.GetSingBoxConfig)
+                        AIFunctionFactory.Create(SingBoxFunctions.GetSingBoxConfig),
+                        AIFunctionFactory.Create(SingBoxFunctions.InstallSingBox)
                     ]
                 },
                 AIContextProviders = [new TextSearchProvider(SearchAdapter, textSearchOptions)]
