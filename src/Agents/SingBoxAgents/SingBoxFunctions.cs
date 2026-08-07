@@ -343,31 +343,27 @@ public static class SingBoxFunctions
         "rule_set": [
           {
             "tag": "geosite-google",
-            "type": "remote",
+            "type": "local",
             "format": "binary",
-            "url": "https://gitee.com/wei_dan/CC/raw/master/geosite-google.srs",
-            "download_detour": "proxy"
+            "path": "geosite-google.srs"
           },
           {
             "tag": "geosite-private",
-            "type": "remote",
+            "type": "local",
             "format": "binary",
-            "url": "https://gitee.com/wei_dan/CC/raw/master/geosite-private.srs",
-            "download_detour": "proxy"
+            "path": "geosite-private.srs"
           },
           {
             "tag": "geosite-cn",
-            "type": "remote",
+            "type": "local",
             "format": "binary",
-            "url": "https://gitee.com/wei_dan/CC/raw/master/geosite-cn.srs",
-            "download_detour": "proxy"
+            "path": "geosite-cn.srs"
           },
           {
             "tag": "geoip-cn",
-            "type": "remote",
+            "type": "local",
             "format": "binary",
-            "url": "https://gitee.com/wei_dan/CC/raw/master/geoip-cn.srs",
-            "download_detour": "proxy"
+            "path": "geoip-cn.srs"
           }
         ],
         "final": "proxy"
@@ -385,19 +381,20 @@ public static class SingBoxFunctions
     }
     """;
 
-    [Description("生成一个基础 sing-box mixed + tun 模式配置文件，并保存到 path 目录下的 config.json。需要提供代理服务器地址、端口、UUID以及配置文件保存目录")]
+    [Description("生成一个基础 sing-box mixed + tun 模式配置文件, 需要提供代理服务器地址、端口、UUID以及配置文件保存目录")]
     public static string GetSingBoxConfig(
         [Description("代理服务器地址，例如域名或IP地址")]string server,
         [Description("代理服务器端口")]string serverPort,
-        [Description("VMess UUID")] string uuid,
-        [Description("配置文件保存路径，例如 /etc/sing-box 或 C:\\sing-box")] string path)
+        [Description("VMess UUID")] string uuid)
     {
         var config = BasicMixedTemplate.Replace("{{server}}", server)
                                  .Replace("{{server_port}}", serverPort)
                                  .Replace("{{uuid}}", uuid);
 
-       // 确保目录存在
-       Directory.CreateDirectory(path);
+        var path = "/etc/sing-box";
+
+        // 确保目录存在
+        Directory.CreateDirectory(path);
 
        var configFilePath = Path.Combine(path, "config.json");
        File.WriteAllText(configFilePath, config);

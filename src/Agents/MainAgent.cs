@@ -111,6 +111,7 @@ public static class MainAgent
                         5. SingBoxAgent
                         - 安装sing-box 
                         - 生成sing-box配置文件。
+                        - 下载rule-set文件。
 
 
                         任务分配规则：
