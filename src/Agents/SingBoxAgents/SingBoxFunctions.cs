@@ -434,5 +434,34 @@ public static class SingBoxFunctions
         process.WaitForExit();
 
         return process.ExitCode == 0 ? output : $"安装失败 (退出码: {process.ExitCode})\n{output}";
-    } 
+    }
+
+    [Description("在Linux系统上下载 sing-box 所需的 rule-set 文件（geosite-google、geosite-private、geosite-cn、geoip-cn）到 /var/lib/sing-box 目录。返回下载过程的输出。")]
+    public static string DownloadRuleSets()
+    {
+        string sudo = Environment.UserName == "root" ? "" : "sudo -n ";
+
+        string downloadDir = "/var/lib/sing-box";
+
+        string command =
+            $"{sudo}mkdir -p {downloadDir} && " +
+            $"{sudo}curl -L --fail --show-error -o {downloadDir}/geosite-google.srs \"https://gitee.com/wei_dan/CC/raw/master/geosite-google.srs\" && " +
+            $"{sudo}curl -L --fail --show-error -o {downloadDir}/geosite-private.srs \"https://gitee.com/wei_dan/CC/raw/master/geosite-private.srs\" && " +
+            $"{sudo}curl -L --fail --show-error -o {downloadDir}/geosite-cn.srs \"https://gitee.com/wei_dan/CC/raw/master/geosite-cn.srs\" && " +
+            $"{sudo}curl -L --fail --show-error -o {downloadDir}/geoip-cn.srs \"https://gitee.com/wei_dan/CC/raw/master/geoip-cn.srs\"";
+
+        using var process = new Process();
+        process.StartInfo.FileName = "/bin/bash";
+        process.StartInfo.ArgumentList.Add("-c");
+        process.StartInfo.ArgumentList.Add(command);
+        process.StartInfo.UseShellExecute = false;
+        process.StartInfo.RedirectStandardOutput = true;
+        process.StartInfo.RedirectStandardError = false;
+        process.Start();
+
+        string output = process.StandardOutput.ReadToEnd();
+        process.WaitForExit();
+
+        return process.ExitCode == 0 ? output : $"下载失败 (退出码: {process.ExitCode})\n{output}";
+    }
 }
